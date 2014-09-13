@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.19, created on 2014-09-11 16:35:05
+<?php /* Smarty version Smarty-3.1.19, created on 2014-09-12 20:58:01
          compiled from "./templates/register.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:16678685845410727b427cf2-12835559%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,13 +7,13 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'bdd7888b868ea071a6069b54bfceadb1f1388f69' => 
     array (
       0 => './templates/register.tpl',
-      1 => 1410445666,
+      1 => 1410538363,
       2 => 'file',
     ),
     '8f2781e18fe2c5e3678597b9d02bd7af46fdad69' => 
     array (
       0 => './templates/layout_nosidebar.tpl',
-      1 => 1410442734,
+      1 => 1410451556,
       2 => 'file',
     ),
   ),
@@ -45,9 +45,13 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 </div>
       <?php }?>
     </div>
-    <div class="form-group<?php if (($_smarty_tpl->tpl_vars['errors']->value[203]!=null)||($_smarty_tpl->tpl_vars['errors']->value[204]!=null)) {?> has-error<?php }?>">
+    <div class="form-group<?php if (($_smarty_tpl->tpl_vars['errors']->value[202]!=null)||($_smarty_tpl->tpl_vars['errors']->value[203]!=null)||($_smarty_tpl->tpl_vars['errors']->value[204]!=null)) {?> has-error<?php }?>">
       <label for="email_address" class="sr-only">Email Address:</label>
       <input type="email" id="email_address" name="email_address" class="form-control" placeholder="Email address" required>
+      <?php if (is_array($_smarty_tpl->tpl_vars['errors']->value)&&array_key_exists(202,$_smarty_tpl->tpl_vars['errors']->value)) {?>
+        <div class="alert alert-danger" role="alert"><?php echo @constant($_smarty_tpl->tpl_vars['errors']->value[204]);?>
+</div>
+      <?php }?>
       <?php if (is_array($_smarty_tpl->tpl_vars['errors']->value)&&array_key_exists(203,$_smarty_tpl->tpl_vars['errors']->value)) {?>
         <div class="alert alert-danger" role="alert"><?php echo @constant($_smarty_tpl->tpl_vars['errors']->value[203]);?>
 </div>

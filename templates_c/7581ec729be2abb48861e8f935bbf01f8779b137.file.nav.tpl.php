@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.19, created on 2014-09-11 15:39:16
+<?php /* Smarty version Smarty-3.1.19, created on 2014-09-12 18:16:51
          compiled from "./templates/nav.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:20087742125411a6042e1898-28713690%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '7581ec729be2abb48861e8f935bbf01f8779b137' => 
     array (
       0 => './templates/nav.tpl',
-      1 => 1410187114,
+      1 => 1410538608,
       2 => 'file',
     ),
   ),
@@ -15,9 +15,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   'function' => 
   array (
   ),
-  'has_nocache_code' => false,
   'version' => 'Smarty-3.1.19',
   'unifunc' => 'content_5411a6042f1fe5_98165300',
+  'has_nocache_code' => false,
 ),false); /*/%%SmartyHeaderCode%%*/?>
 <?php if ($_valid && !is_callable('content_5411a6042f1fe5_98165300')) {function content_5411a6042f1fe5_98165300($_smarty_tpl) {?>
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -34,14 +34,12 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
+        <li><a href="logout.php">Log Out</a></li>
         <li><a href="#">Dashboard</a></li>
         <li><a href="#">Settings</a></li>
         <li><a href="#">Profile</a></li>
         <li><a href="#">Help</a></li>
       </ul>
-      <form class="navbar-form navbar-right">
-        <input type="text" class="form-control" placeholder="Search...">
-      </form>
     </div>
   </div>
 </nav><?php }} ?>

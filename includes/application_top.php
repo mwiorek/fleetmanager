@@ -5,6 +5,7 @@ require_once('includes/config.php'); //load config values
 require_once(DIR_WS_INCLUDES . 'functions.php');
 
 require_once('filename.php');
+require_once('database_tables.php');
 
 require_once(DIR_WS_CLASSES . 'errorStack.php');
 

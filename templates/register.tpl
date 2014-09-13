@@ -15,9 +15,12 @@
         <div class="alert alert-danger" role="alert">{$smarty.const.{$errors.201}}</div>
       {/if}
     </div>
-    <div class="form-group{if ($errors.203 neq NULL) or ($errors.204 neq NULL)} has-error{/if}">
+    <div class="form-group{if ($errors.202 neq NULL) or ($errors.203 neq NULL) or ($errors.204 neq NULL)} has-error{/if}">
       <label for="email_address" class="sr-only">Email Address:</label>
       <input type="email" id="email_address" name="email_address" class="form-control" placeholder="Email address" required>
+      {if is_array($errors) and array_key_exists(202,$errors)}
+        <div class="alert alert-danger" role="alert">{$smarty.const.{$errors.204}}</div>
+      {/if}
       {if is_array($errors) and array_key_exists(203,$errors)}
         <div class="alert alert-danger" role="alert">{$smarty.const.{$errors.203}}</div>
       {/if}
