@@ -1,5 +1,5 @@
 {* Smarty *}
-    
+
 {extends file="layout_nosidebar.tpl"}
 {block name="title"}Register Account{/block}
 {block name="body"}
@@ -10,16 +10,16 @@
      
     <div class="form-group{if $errors.201 neq NULL} has-error{/if}">
       <label for="name" class="sr-only">Name:</label>
-      <input type="text" id="name" name="name" class="form-control" placeholder="Name" required autofocus pattern="{literal}.{1,64}{/literal}" title="A valid name 1-64 letters">
+      <input type="text" id="name" name="name" class="form-control" placeholder="Name" required autofocus pattern="{literal}.{1,64}{/literal}" title="A valid name 1-64 letters" value="{$name}">
       {if is_array($errors) and array_key_exists(201,$errors)}
         <div class="alert alert-danger" role="alert">{$smarty.const.{$errors.201}}</div>
       {/if}
     </div>
     <div class="form-group{if ($errors.202 neq NULL) or ($errors.203 neq NULL) or ($errors.204 neq NULL)} has-error{/if}">
       <label for="email_address" class="sr-only">Email Address:</label>
-      <input type="email" id="email_address" name="email_address" class="form-control" placeholder="Email address" required>
+      <input type="email" id="email_address" name="email_address" class="form-control" placeholder="Email address" required value="{$email_address}">
       {if is_array($errors) and array_key_exists(202,$errors)}
-        <div class="alert alert-danger" role="alert">{$smarty.const.{$errors.204}}</div>
+        <div class="alert alert-danger" role="alert">{$smarty.const.{$errors.202}}</div>
       {/if}
       {if is_array($errors) and array_key_exists(203,$errors)}
         <div class="alert alert-danger" role="alert">{$smarty.const.{$errors.203}}</div>

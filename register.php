@@ -9,6 +9,9 @@ require(DIR_WS_CLASSES . 'user.php');
 $errorStack = new errorStack;
 $userHandler = new userHandler;
 
+$name = NULL;
+$email_address = NULL;
+
 if (isset($_POST['action']) && $_POST['action'] == 'register'){
 
 	if (isset($_POST['name']) && ($_POST['name'] != '')){
@@ -18,7 +21,16 @@ if (isset($_POST['action']) && $_POST['action'] == 'register'){
 	}
 	if (isset($_POST['email_address']) && ($_POST['email_address'] != '')){
 		//$email_address = idn_to_ascii($_POST['email_address']);
-		$email_address = idn_to_ascii($_POST['email_address']);
+		if (function_exists('idn_to_ascii'){
+			$email_address = idn_to_ascii($_POST['email_address']);
+		}else{
+			require_once(DIR_WS_CLASSES . 'idna_convert.class.php')
+			//WORKAROUND FOR MISSING IDN_TO_ASCII and or PECL
+			//SEE LICENCE
+			$IDN = new idna_convert(array('idn_version' => 2008));
+			$email_address = $IDN->encode_uri($_POST['email_address']);
+		}
+		
 		
 		//punycode to bypass FILTER_VALIDATE_EMAIL unability to handle international domains
 		if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)){
@@ -57,18 +69,14 @@ if (isset($_POST['action']) && $_POST['action'] == 'register'){
 		}
 	}
 
-
 }
-
-
-
-
 
 $smarty = new Smarty();
 if (isset($user_id)){
 	$smarty->assign('user_id', $user_id);
 }
 
+$smarty->assign('name', $name);
+$smarty->assign('email_address', $email_address);
 $smarty->assign('errors', $errorStack->getErrors());	
-
 $smarty->display('register.tpl');

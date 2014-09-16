@@ -7,7 +7,7 @@ Class databaseConnection{
 
 	static private $db_host = 'localhost';
 	static private $db_user = 'root';
-	static private $db_password = 'root';
+	static private $db_password = 'rabq=gyh!9';
 	static private $db_database = 'test';
 
 	function databaseConnection(){

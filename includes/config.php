@@ -15,7 +15,9 @@ define('DIR_WS', ''); // virtual file directory (webdirectories)
 
 define('SMARTY_DIR', DIR_FS . '/libs/Smarty-3.1.19/');
 
-define('HTTP_SERVER', 'http://localhost'); 
+define('HTTP_SERVER', 'http://83.248.62.95'); 
+define('HTTPS_SERVER', 'https://83.248.62.95'); 
+define('SSL_ENABLED', true);
 
 define('DIR_WS_STATIC', 'static/');
 
