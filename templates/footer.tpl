@@ -1,12 +1,8 @@
-    <div class="footer container-fluid">
+    <div class="footer {block name=sidebar-class}{/block}">
     
-      <div class="row">
-        <div class="col-xs-12">
           <p class="text-muted">
             ©Martin Wiorek 2014 built using: Twiter Bootstrap, Smarty Template System, and jQuery
           </p>
-        </div>
-      </div>
  
     </div>
     {block name="footer_scripts"}

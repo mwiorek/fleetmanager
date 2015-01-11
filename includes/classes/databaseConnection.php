@@ -1,16 +1,17 @@
 <?php
 
-Class databaseConnection{
+class databaseConnection{
 
 	//update static varibles to your own database credentials
 	//defined in db connection class as private static for security reasons
 
 	static private $db_host = 'localhost';
 	static private $db_user = 'root';
-	static private $db_password = 'rabq=gyh!9';
+	//static private $db_password = 'rabq=gyh!9';
+	static private $db_password = '';
 	static private $db_database = 'test';
 
-	function databaseConnection(){
+	static function connect(){
 		global $mysqli;
 		//using self:: instead of static:: to prevent late static binding
 
@@ -20,10 +21,9 @@ Class databaseConnection{
 		}else{
 			return $mysqli;
 		}
-		
 	}
 
-	function close(){
+	static function close(){
 		global $mysqli;
 		//Kill and close db connection
 

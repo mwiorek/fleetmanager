@@ -1,25 +1,41 @@
-{* Smarty *}
-    
-{include 'header.tpl'}
-
-<div class="container">
-
-  <form class="form-signin" role="form" action="{$smarty.const.FILENAME_LOGIN}" method="POST">
-    <h2 class="form-signin-heading">Please sign in</h2>
+{* Smarty *} 
+{extends file="layout_nosidebar.tpl"}
+{block name="title"}Login{/block}
+{block name="body"}
+<form class="form signin" role="form" action="{$smarty.const.FILENAME_LOGIN}" method="POST">
+    <h2>Please sign in</h2>
+    {if is_array($errors) and array_key_exists(301,$errors)}
+    <div class="alert alert-danger" role="alert">{$smarty.const.{$errors.301}}</div>
+    {/if}
+    <input type="hidden" name="csrfToken" value="{$csrfToken}">
     <input type="hidden" name="action" value="login">
-    <input type="email" class="form-control" placeholder="Email address" required autofocus>
-    <input type="password" class="form-control" placeholder="Password" required>
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" value="remember-me"> Remember me
-      </label>
+    <div class="form-group {if ($errors.201 neq NULL) or ($errors.207 neq NULL)}has-error{/if}">
+        <label for="email_address">Email Address:</label>
+        <input type="email" id="email_address" name="email_address" class="form-control" placeholder="Email address" required value="{if ($email_address neq NULL)}{$email_address}{/if}">
+        {if is_array($errors) and array_key_exists(201,$errors)}
+        <div class="alert alert-danger" role="alert">{$smarty.const.{$errors.201}}</div>
+        {/if}
+        {if is_array($errors) and array_key_exists(207,$errors)}
+        <div class="alert alert-danger" role="alert">{$smarty.const.{$errors.207}}</div>
+        {/if}
     </div>
-    <input class="btn btn-lg btn-primary btn-block" type="submit" value="Sign in">
-    <p class="help-block text-center">or</p>
-    <a href="{$smarty.const.FILENAME_REGISTER}" class="btn btn-lg btn-default btn-block">Register</a>
-    <p class="help-block">Did you forget your password? <a href="{$smarty.const.FILENAME_PASSWORD_FORGOTTEN}">Click Here</a></p>
-  </form>
-  <p>{$smarty.session.id}</p>
-</div> <!-- /container -->
-
-{include 'footer.tpl'}
+    <div class="form-group {if $errors.202 neq NULL}has-error{/if}">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+        {if is_array($errors) and array_key_exists(202,$errors)}
+        <div class="alert alert-danger" role="alert">{$smarty.const.{$errors.202}}</div>
+        {/if}
+    </div>
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" value="remember-me" name="remember_me"> Remember me
+        </label>
+    </div>
+    <div class="form-actions">
+        <input class="btn btn-primary" type="submit" value="Sign in">
+        <span> or </span>
+        <a href="{$smarty.const.FILENAME_REGISTER}" class="btn">Register</a>
+    </div>
+    <p>Have you forgotten your password? <a href="{$smarty.const.FILENAME_PASSWORD_FORGOTTEN}">Click Here</a></p>
+</form>
+{/block}

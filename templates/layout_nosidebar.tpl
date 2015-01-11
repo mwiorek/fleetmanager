@@ -1,5 +1,4 @@
 {* Smarty *}
-  {include 'header.tpl'}
-  {include 'nav.tpl'}
-  {block name="body"}{/block}
-  {include 'footer.tpl'}
+{extends file="layout.tpl"}
+{block name=sidebar}{/block}
+{block name=sidebar-class}no-sidebar{/block}

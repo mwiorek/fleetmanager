@@ -5,9 +5,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{block name="title"}Default Page Title{/block}</title>
+    <title>{block name="title"}{$pageTitle} - Default Page Title{/block}</title>
 
-    <link rel="stylesheet/less" type="text/css" href="{$smarty.const.DIR_WS_STATIC}less/bootstrap.less" />
+    <link rel="stylesheet/less" type="text/css" href="{$smarty.const.DIR_WS_STATIC}less/martins.less" />
     <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.4/less.min.js"></script> -->
     <script src="{$smarty.const.DIR_WS_STATIC}js/vendor/less-1.7.4.min.js"></script>
     <!-- Bootstrap -->

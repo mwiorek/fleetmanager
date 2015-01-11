@@ -4,6 +4,6 @@
 	session_destroy();
 	require_once(DIR_WS_INCLUDES . 'application_bottom.php');
 	
-	bid_redirect(FILENAME_DEFAULT);
-
+	http_redirect(FILENAME_DEFAULT);
+	
 ?>
