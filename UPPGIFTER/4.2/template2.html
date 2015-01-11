@@ -1,0 +1,18 @@
+<html>
+<head>
+</head>
+<body>
+	<h1>Cookie setter</h1>
+	<p>	
+		Your browser has the following cookies set:
+	<p>
+	<ul>
+	{% loop %}
+		<li>{{ $k }} = {{ $v }}</li>
+	{% loop %}
+	</ul>
+	<p>
+		If no cookies have been set go <a href="{{ $destination_script }}"><- back </a> and verify your browser settings.
+	</p>
+</body>
+</html>

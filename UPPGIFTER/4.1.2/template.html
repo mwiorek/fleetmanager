@@ -1,0 +1,13 @@
+<html>
+	<head>
+	</head>
+	<body>
+		<p>
+		<form action="{{ $form_action }}" method="POST">
+			<input type="hidden" name="regnr" value="{{ $regnr }}" />
+			<label for="car">Description of car: </label>
+			<input type="text" name="car" id="car"/>
+			<input type="submit" value="Submit Form" />
+		</form>
+	</body>
+</html>

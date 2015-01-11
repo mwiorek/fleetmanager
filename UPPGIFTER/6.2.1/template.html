@@ -1,0 +1,38 @@
+<html>
+	<head>
+		
+	</head>
+	<body>
+		<h1>Guest Book</h1>
+		<form action="index.php" method="POST">
+			<label for="name">Name:</label>
+			<input type="text" name="name" id="name" /><br/>
+			<label for="email_adress">Email Adress:</label>
+			<input type="text" name="email_adress" id="email_adress" /><br/>
+			<label for="website">Website:</label>
+			<input type="text" name="website" id="website" /><br/>
+			<label for="comment">Comment:</label>
+			<textarea name="comment" id="comment"></textarea><br/>
+			<input type="submit" value="Post Comment" />
+		</form>
+		<hr>
+		<strong>Sort Posts:</strong><br>
+		<form action="index.php" method="get" onchange="this.submit();">
+			<select name="sort_order">
+				{% loop %}
+				<option value="{{ $sort_column[0] }}" {{ $sort_column[1] }} >{{ $sort_column[2] }}</option>
+				{% loop %}
+			</select>
+		</form>
+		{% loop %}
+			<hr>
+			<strong>Post:</strong> {{ $v[id] }} <br/>
+			<br/>
+			<strong>Time:</strong> {{ $v[date] }} <br/>
+			<strong>From:</strong> <a href="{{ $v[website] }}">{{ $v[name] }}</a> <br/>
+			<strong>Email Adress:</strong> <a href="mailto:{{ $v[email_adress] }}">{{ $v[email_adress] }}</a> 
+			<br/>
+			<strong>Comment:</strong> {{ $v[comment] }}
+		{% loop %}
+	</body>
+</html>

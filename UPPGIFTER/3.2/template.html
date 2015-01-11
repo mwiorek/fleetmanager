@@ -1,0 +1,17 @@
+<html>
+<head>
+</head>
+<body>
+	<h1>Environment variables</h1>
+	<table>
+		<tr>
+			<th>Key</th><th>Value</th>
+		</tr>
+		{% loop %}
+		<tr>
+			<td>{{ $k }}</td><td>{{ $v }}</td>
+		</tr>
+		{% loop %}
+	</table>
+</body>
+</html>

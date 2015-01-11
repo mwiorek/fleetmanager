@@ -1,0 +1,11 @@
+<html>
+<head>
+</head>
+<body>
+	<h1>All the cars</h1>
+		{% loop %}
+		<a href="{{ $destination_script }}{{ $params }}{{ $new_params }}">{{ $v }}</a></br>
+		{% loop %}
+	<p>{{ $error_message }}</p>
+</body>
+</html>

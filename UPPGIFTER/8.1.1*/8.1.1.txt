@@ -1,0 +1,13 @@
+Check wether or not $_SERVER['PHP_AUTH_USER'] and $_SERVER['PHP_AUTH_PW'] are set
+to we assign these variables or empty string depending on if set.
+
+Check the username and password against an array('username' => 'password'),
+if username and password match return true else false
+
+if the users credentials are ok, the server will send the user on to the page to
+display the welcome message
+
+if the user is not yet authenticated the server will send a http response code 401: not authorized it will then send an authenticate 'basic' header. When the user enters his/ 
+hers username and password the browser will base64 encode the string as such: "username:password" and pass it on to the server. This method is not a safe method. As 
+passwords are being sent in only more or less plain text as close as to the base64 en-
+oding.
