@@ -246,17 +246,8 @@ class user{
 					$inserted_user = user::getUser($email_address);
 					if (user::countUsers('ADMIN') < 1){
 						//someone must have ADMIN rights
+						$inserted_user->addRole('ADMIN');
 						
-						$user_role_stmt = $mysqli->prepare("INSERT INTO " . TABLE_USERS_ROLES . " (users_id, role) VALUES (?, 'ADMIN')");
-
-						$user_role_stmt->bind_param('s', $inserted_user->getUserId());
-
-						if (!$user_role_stmt->execute()){
-							//Error
-							trigger_error('The query execution failed; MySQL said ('.$user_role_stmt->errno.') '.$user_role_stmt->error, E_USER_ERROR);
-						}
-
-						$user_role_stmt->close();
 					}
 					return $inserted_user;
 				} else {
@@ -273,6 +264,66 @@ class user{
 			throw new Exception('Email Address already registered', 204);
 		}
 
+	}
+
+	private function updateRole($role, $delete = false){
+		global $mysqli;
+
+		$check_role = $mysqli->prepare("SELECT count(*) as total FROM " . TABLE_ROLES . " WHERE roles_name = ?");
+		$check_role->bind_param('s', $role);
+
+		if (!$check_role->execute()){
+			//Error
+			trigger_error('The query execution failed; MySQL said ('.$check_role->errno.') '.$check_role->error, E_USER_ERROR);
+		}
+
+		$check_role->store_result();
+		$check_role->bind_result($role_exists);
+		$check_role->fetch();
+		$check_role->close();
+		if ($role_exists){
+			//will return 0 or 1, can be used as a boolean
+			if ($delete){
+				$user_role_stmt = $mysqli->prepare("DELETE FROM " . TABLE_USERS_ROLES . " WHERE users_id = ? and role = ?");
+			}else{
+				$user_role_stmt = $mysqli->prepare("INSERT INTO " . TABLE_USERS_ROLES . " (users_id, role) VALUES (?, ?)");
+			}
+
+			$user_role_stmt->bind_param('ss', $this->getUserId(), $role);
+
+			if (!$user_role_stmt->execute()){
+							//Error
+				trigger_error('The query execution failed; MySQL said ('.$user_role_stmt->errno.') '.$user_role_stmt->error, E_USER_ERROR);
+			}
+
+			$affected_rows = $user_role_stmt->affected_rows;
+			
+			$user_role_stmt->close();
+			
+			if ($affected_rows > 0){
+				return true;
+			}else{
+				return false;
+			}
+
+		}else{
+			throw new Exception("Role doesn't exist", 226);	
+		}
+		return false;
+		
+	}
+
+	function addRole($role){
+		$this->updateRole($role, false);
+	}
+
+	function removeRole($role){
+		if ($role == 'ADMIN' && user::countUsers('ADMIN') <= 1){
+			throw new Exception("ERROR_NAME_THIS_IS_THE_ONLY_ADMIN", 227);
+		}else{
+			$this->updateRole($role, true);
+		}
+		
 	}
 
 	static function countUsers($role = null){
@@ -366,8 +417,6 @@ class user{
 	static function emailIsRegistered($email_address){
 		global $mysqli;
 
-		$email_count;
-
 		$email_check = $mysqli->prepare("SELECT count(*) as total FROM " . TABLE_USERS . " WHERE users_email_address = ?");
 
 		$email_address = $mysqli->real_escape_string($email_address);
@@ -391,6 +440,35 @@ class user{
 			return false;
 			//email does not exist in db;
 		}
+	}
+
+	static function getAllRoles($admin = false){
+		global $mysqli;
+		
+		$roles_sql = "SELECT roles_name FROM " . TABLE_ROLES . "";
+		
+		if (!$admin){
+			$roles_sql .= " WHERE roles_name != 'ADMIN'";	
+		}
+
+		$roles_stmt = $mysqli->prepare($roles_sql);
+
+		if (!$roles_stmt->execute()){
+			//Error
+			trigger_error('The query execution failed; MySQL said ('.$roles_stmt->errno.') '.$roles_stmt->error, E_USER_ERROR);
+		}
+
+		$roles_stmt->store_result();
+		$roles_stmt->bind_result($role);
+		
+		$roles_list = array();
+		while ($roles_stmt->fetch()){
+			$roles_list[] = $role;
+		}
+		$roles_stmt->close();
+
+		return $roles_list;	
+
 	}
 
 	function deleteUser(){

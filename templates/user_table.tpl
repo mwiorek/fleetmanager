@@ -14,7 +14,7 @@
 		<td>{$user->getName()}</td>
 		<td>{$user->getEmailAddress()}</td>
 		<td>{'<br/> '|implode:$user->getUserRole()}</td>
-		<td><a href="{$smarty.const.FILENAME_SETTINGS}">Edit User</a></td>
+		<td><a href="{$smarty.const.FILENAME_SETTINGS}?users_id={$user->getUserId()}">Edit User</a></td>
 	</tr>
 	{foreachelse}
 	<tr>

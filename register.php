@@ -12,6 +12,14 @@ $csrf = new csrf();
 $name = NULL;
 $email_address = NULL;
 
+if (isset($_SESSION['users_id'])){
+	$logged_in_user = new user($_SESSION['users_id']);
+	if (!in_array('ADMIN', $logged_in_user->getUserRole())){
+		$errorStack->setError(302);
+	}
+}  
+	//not triggered if user isn't logged in
+
 if (isset($_POST['action']) && $_POST['action'] == 'register'){
 
 	if (isset($_POST['name']) && ($_POST['name'] != '')){
@@ -52,14 +60,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'register'){
 		$errorStack->setError(301);
 	}
 
-	if (isset($_SESSION['user_id'])){
-		$logged_in_user = new user($_SESSION['user_id']);
-		if (!in_array('ADMIN', $logged_in_user->getUserRole())){
-			$errorStack->setError(302);
-		}
-	}  
-	//not triggered if user isn't logged in
-	
 	if (!$errorStack->hasErrors()){
 		//if all is clear create the new user
 		try{
@@ -107,8 +107,9 @@ $smarty->assign('csrfToken', $CSRFToken);
 $smarty->assign('name', $name);
 $smarty->assign('email_address', $email_address);
 $smarty->assign('errors', $errors);	
-if (isset($_SESSION['user_id'])){
-	$smarty->display('register_user.tpl');
+
+if (isset($_SESSION['users_id'])){
+		$smarty->display('register_user.tpl');
 }else{
 	$smarty->display('register.tpl');
 }

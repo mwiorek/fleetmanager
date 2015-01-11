@@ -16,3 +16,5 @@ define('ERROR_NAME_NO_PASSWORD_CONFIRMATION_PROVIDED', 'You need to provide a pa
 define('ERROR_NAME_PASSWORDS_DO_NOT_MATCH', 'Your passwords do not match.');
 define('ERROR_NAME_NO_OLD_PASSWORD_PROVIDED', 'You need to provide your current password');
 define('ERROR_NAME_NO_NEW_PASSWORD_PROVIDED', 'Please provide a new password');
+
+define('ERROR_NAME_PERMISSION_DENIED', 'You do not have permission to perform this task');

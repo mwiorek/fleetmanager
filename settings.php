@@ -11,6 +11,13 @@ $csrf = new csrf();
 
 $user = new user($_SESSION['users_id']);
 
+$url_params = "";
+
+if (in_array('ADMIN', $user->getUserRole()) && isset($_GET['users_id']) && $_GET['users_id'] != ''){
+	$user = new user($_GET['users_id']);
+	$url_params = "?" . "users_id=" . $_GET['users_id'];
+}
+
 $successful_update = false;
 
 if (isset($_POST['action']) && ($_POST['action'] == 'update')){
@@ -23,22 +30,10 @@ if (isset($_POST['action']) && ($_POST['action'] == 'update')){
 		$errorStack->setError(203);
 	}
 
-	if (isset($_POST['email_address']) && ($_POST['email_address'] != '')){
+	if (!isset($_POST['email_address']) || ($_POST['email_address'] == '')){
 		//if new email is provided
-		if ($_POST['email_address'] != $user->getEmailAddress()){
-
-			if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)){
-				$errorStack->setError(206);
-			}else{
-				$email_address = filter_var($_POST['email_address'], FILTER_SANITIZE_EMAIL);
-				if (user::emailIsRegistered($email_address)){
-					$errorStack->setError(205);
-				}
-			}
-		}
-		
-	}else{
 		$errorStack->setError(207);
+		
 	}
 
 	if ( (isset($_POST['old_password']) && $_POST['old_password'] != '') || (isset($_POST['new_password']) && $_POST['new_password'] != '') || (isset($_POST['new_password_confirmation']) && $_POST['new_password_confirmation'] != '')){
@@ -146,7 +141,7 @@ if (isset($_POST['action']) && ($_POST['action'] == 'update')){
 				}
 
 				imagedestroy($orignal_image);
-					//unlink(DIR_WS_MEDIA . 'profile_images/' . $user_id . '_org.' . $ext);
+				unlink(DIR_WS_MEDIA . 'profile_images/' . $user->getUserId() . '_org.' . $ext);
 
 			}else{
 				$errorStack->setError(215);
@@ -155,7 +150,6 @@ if (isset($_POST['action']) && ($_POST['action'] == 'update')){
 		}
 
 	}
-
 
 	if (!$errorStack->hasErrors()){
 
@@ -168,8 +162,20 @@ if (isset($_POST['action']) && ($_POST['action'] == 'update')){
 			}
 
 			if ($_POST['email_address'] != $user->getEmailAddress()){
-				$user->updateEmailAddress($_POST['email_address']);
-				$user_updated = true;
+
+				if (!filter_var($_POST['email_address'], FILTER_VALIDATE_EMAIL)){
+					$errorStack->setError(206);
+				}else{
+					$email_address = filter_var($_POST['email_address'], FILTER_SANITIZE_EMAIL);
+					if (user::emailIsRegistered($email_address)){
+						$errorStack->setError(205);
+					}else{
+						$user->updateEmailAddress($_POST['email_address']);
+						$user_updated = true;
+					}
+				}
+				
+				
 			}
 
 			if (isset($trigger_password_update) && $trigger_password_update){
@@ -179,14 +185,42 @@ if (isset($_POST['action']) && ($_POST['action'] == 'update')){
 
 			if (isset($_FILES['profile_image']) && ($_FILES['profile_image']['name'] != '')){
 				rename($thumbnail_filename, $thumbnail_final_filename);
-				
+
 				$user->updateProfileImage($thumbnail_final_filename);
 				$user_updated = true;
+			}
+
+			
+
+			$show_admin = (in_array('ADMIN', $user->getUserRole()) || $user->getUserId() != $_SESSION['users_id']);
+			foreach (user::getAllRoles($show_admin) as $role) {
+				if (isset($_POST['roles'])){
+					if (in_array($role, $_POST['roles']) && !in_array($role, $user->getUserRole()) ){
+						//addRole
+						$user->addRole($role);
+						$user_updated = true;
+						
+					}elseif(!in_array($role, $_POST['roles']) && in_array($role, $user->getUserRole())){
+						//removeRole
+						$user->removeRole($role);
+						$user_updated = true;
+					}
+					//else
+					//nothing has changed do nothing
+				}else{
+					//if all roles are being removed
+					if (in_array($role, $user->getUserRole())){
+						//removeRole
+						$user->removeRole($role);
+						$user_updated = true;
+					}
+				}
 			}
 
 			if ($user_updated){
 				$user->updateLastModified();
 			}
+
 			$successful_update = true;
 
 
@@ -196,13 +230,17 @@ if (isset($_POST['action']) && ($_POST['action'] == 'update')){
 	}
 
 }elseif(isset($_POST['action']) && $_POST['action'] == 'delete'){
-	
+
 	if (!$csrf->validateCSRFToken($_POST['csrfToken'])){
 		$errorStack->setError(301);
 	}
 
 	if ($user->deleteUser()){
-		http_redirect(FILENAME_LOGOUT);
+		if ($user->getUserId() != $_SESSION['users_id']){
+			http_redirect(FILENAME_DEFAULT);
+		}else{ 
+			http_redirect(FILENAME_LOGOUT);
+		}
 	}
 	else{
 		$errorStack->setError(216);
@@ -212,8 +250,21 @@ if (isset($_POST['action']) && ($_POST['action'] == 'update')){
 
 $CSRFToken = $csrf->generateCSRFToken(session_id());
 
-//reload user after action
 $user = new user($_SESSION['users_id']);
+
+$roles = user::getAllRoles(in_array('ADMIN', $user->getUserRole()));
+
+//reload user after action
+if (in_array('ADMIN', $user->getUserRole()) && isset($_GET['users_id']) && $_GET['users_id'] != ''){
+	$user = new user($_GET['users_id']);
+	$roles = user::getAllRoles(true);
+}
+
+$user_to_roles = array();
+
+foreach ($roles as $role) {
+	$user_to_roles[$role] = (in_array($role, $user->getUserRole()));
+}
 
 require_once(DIR_WS_INCLUDES . 'application_bottom.php');
 
@@ -223,7 +274,9 @@ $smarty = new Smarty();
 $smarty->assign('pageTitle', 'Settings');  
 
 $smarty->assign('csrfToken', $CSRFToken);
+$smarty->assign('url_params', $url_params);
 $smarty->assign('user', $user);
+$smarty->assign('user_to_roles', $user_to_roles);
 
 $smarty->assign('errors', $errors);
 $smarty->assign('successful_update', $successful_update);

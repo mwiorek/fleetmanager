@@ -4,7 +4,7 @@
 
 {block name="body"}
 
-<form class="form" role="form" action="{$smarty.const.FILENAME_SETTINGS}" method="POST" enctype="multipart/form-data"> 
+<form class="form" role="form" action="{$smarty.const.FILENAME_SETTINGS}{$url_params}" method="POST" enctype="multipart/form-data"> 
 	<input type="hidden" name="csrfToken" value="{$csrfToken}">
 	<input type="hidden" name="action" value="update">
 	<h3>Change Basic Information</h3>
@@ -82,7 +82,7 @@
 		{/if}
 	</div>
 
-	<div class="form-group {if $errors.212 neq NULL}has-error{/if}">
+	<div class="form-group {if ($errors.212 neq NULL) or ($errors.210 neq NULL)}has-error{/if}">
 		<label for="new_password">New Password:</label>
 		<input type="password" id="new_password" name="new_password" class="form-control" placeholder="New Password">
 		{if is_array($errors) and array_key_exists(212,$errors)}
@@ -107,11 +107,20 @@
 		{/if}
 	</div>
 
+	<div class="form-group">
+		<label>Roles:</label>
+		{foreach $user_to_roles as $role => $value}
+			
+			<label><input type="checkbox" name="roles[]" value="{$role}" {if $value}checked{/if}>{$role}</label>
+		
+		{/foreach}
+	</div>
+
 	<button class="btn btn-primary" type="submit">Confirm Changes</button>
 
 </form>
 
-<form method="POST" action="{$smarty.const.FILENAME_SETTINGS}" onSubmit="return confirmDelete()">
+<form method="POST" action="{$smarty.const.FILENAME_SETTINGS}{$url_params}" onSubmit="return confirmDelete()">
 	<input type="hidden" name="csrfToken" value="{$csrfToken}">
 	<input type="hidden" name="action" value="delete">
 	<button type="submit">Delete Account</button>
@@ -119,7 +128,7 @@
 
 <script type="text/javascript">
 	function confirmDelete() {
-		return confirm("Are you sure you want to permanently delete your account?");
+		return confirm("Are you sure you want to permanently delete this account?");
 	}
 </script>
 {/block}

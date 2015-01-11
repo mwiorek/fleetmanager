@@ -9,6 +9,11 @@ require(DIR_WS_CLASSES . FILENAME_VEHICLE);
 $errorStack = new errorStack; 
 $csrf = new csrf();
 
+if (!isset($_SESSION['users_id'])){
+	$_SESSION['redirect_uri'] = $_SERVER['SCRIPT_NAME'];
+	http_redirect(FILENAME_LOGIN);
+}
+
 $successful_update = false;
 
 if (isset($_GET['regNr']) && $_GET['regNr'] != ''){
@@ -38,35 +43,35 @@ if (isset($_POST['action']) && $_POST['action'] != 'toggleStatus'){
 		$regNr = strtoupper($_POST['regNr']);
 	}else{
 		$errorStack->setError(217);
-		//no regNr
+
 	}
 
 	if (isset($_POST['make']) && $_POST['make'] != ''){
 		$make = strtoupper($_POST['make']);
 	}else{
 		$errorStack->setError(218);
-		//no regNr
+
 	}
 
 	if (isset($_POST['model']) && $_POST['model'] != ''){
 		$model = $_POST['model'];
 	}else{
 		$errorStack->setError(219);
-		//no regNr
+
 	}
 
 	if (isset($_POST['year']) && preg_match('/\d{4}/', $_POST['year'])){
 		$year = $_POST['year'];
 	}else{
 		$errorStack->setError(220);
-		//no year
+
 	}
 
 	if (isset($_POST['mileage']) && preg_match('/\d+/', $_POST['mileage'])){
 		$mileage = strtoupper($_POST['mileage']);
 	}else{
 		$errorStack->setError(221);
-		//no mileage
+
 	}
 
 	if (!$errorStack->hasErrors()){
