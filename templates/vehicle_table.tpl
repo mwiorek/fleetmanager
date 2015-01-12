@@ -1,5 +1,5 @@
 {* smarty *}
-<h3>Vehicles</h3>
+<h3>{$title}</h3>
 <table class="table">
 	<tr>
 		<th>Registration Number</th>
@@ -16,14 +16,16 @@
 		<td>{$vehicle->getModel()}</td>
 		<td>{$vehicle->getYear()}</td>
 		<td>{$vehicle->getMileage()}</td>
-		<td><a href="{$smarty.const.FILENAME_VEHICLE}?regNr={$vehicle->getRegNr()}">Edit</a></td>
+		<td><a href="{$smarty.const.FILENAME_VEHICLE}?reg_nr={$vehicle->getRegNr()}">Edit</a></td>
 	</tr>
 	{foreachelse}
 	<tr>
 		<td colspan="5">
-			No vehicles registered
+			No vehicles to display
 		</td> 
 	</tr>
 	{/foreach}
 </table>
+{if $title == 'All Vehicles'}
 <a href="{$smarty.const.FILENAME_VEHICLE}">+ Add Vehicle</a>
+{/if}

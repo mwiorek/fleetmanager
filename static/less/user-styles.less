@@ -53,7 +53,7 @@ body {
     top: 51px;
     bottom: 60px;
     left: 0;
-    z-index: 1000;
+    z-index: 500;
     display: block;
     padding: 20px;
     overflow-x: hidden;
@@ -122,11 +122,12 @@ body {
 -------------------------------------------------- */
 
 .footer {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 100%;
   /* Set the fixed height of the footer here */
   height: 60px;
+  z-index: 1000;
   background-color: #000000;
   border-top: 1px solid #eee;
   padding: 10px;

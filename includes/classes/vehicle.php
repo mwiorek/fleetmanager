@@ -2,7 +2,7 @@
 
 class vehicle{
 	
-	private $regNr;
+	private $registration_number;
 	private $make;
 	private $model;
 	private $year;
@@ -10,14 +10,14 @@ class vehicle{
 	private $mileage;
 	private $active;
 
-	function vehicle($regNr){
+	function vehicle($registration_number){
 		global $mysqli;
 		
 		$vehicle_stmt = $mysqli->prepare("SELECT registration_number, make, model, year, registration_date, vehicle_mileage, active FROM " . TABLE_VEHICLES . " WHERE registration_number = ?");
 
-		$regNr = $mysqli->real_escape_string($regNr);
+		$registration_number = $mysqli->real_escape_string($registration_number);
 
-		$vehicle_stmt->bind_param('s', $regNr);
+		$vehicle_stmt->bind_param('s', $registration_number);
 
 		if (!$vehicle_stmt->execute()){
 				//Error
@@ -25,10 +25,10 @@ class vehicle{
 		}
 
 		$vehicle_stmt->store_result();
-		$vehicle_stmt->bind_result($regNr, $make, $model, $year, $regDate, $mileage, $active);
+		$vehicle_stmt->bind_result($registration_number, $make, $model, $year, $regDate, $mileage, $active);
 
 		if ($vehicle_stmt->fetch()) {
-			$this->regNr = $regNr;
+			$this->registration_number = $registration_number;
 			$this->make = $make;
 			$this->model = $model;
 			$this->year = $year;
@@ -46,12 +46,12 @@ class vehicle{
 
 	}
 
-	static function regNrExists($regNr){
+	static function regNrExists($registration_number){
 		global $mysqli;
 
 		$reg_check = $mysqli->prepare("SELECT count(*) as total FROM " . TABLE_VEHICLES . " WHERE registration_number = ?");
 
-		$regNr = $mysqli->real_escape_string($regNr);
+		$registration_number = $mysqli->real_escape_string($registration_number);
 
 		$reg_check->bind_param('s', $email_address);
 
@@ -74,12 +74,12 @@ class vehicle{
 		}
 	}
 
-	static function createVehicle($regNr, $make, $model, $year, $mileage = 0){
+	static function createVehicle($registration_number, $make, $model, $year, $mileage = 0){
 		global $mysqli;
 
-		if (!vehicle::regNrExists($regNr)){
+		if (!vehicle::regNrExists($registration_number)){
 
-			$regNr = $mysqli->real_escape_string($regNr);
+			$registration_number = $mysqli->real_escape_string($registration_number);
 			$make = $mysqli->real_escape_string($make);
 			$model = $mysqli->real_escape_string($model);
 			$year = $mysqli->real_escape_string($year);
@@ -89,7 +89,7 @@ class vehicle{
 
 			$vehicle_create_stmt = $mysqli->prepare("INSERT INTO " . TABLE_VEHICLES . " (registration_number, make, model, year, registration_date, vehicle_mileage, active) VALUES (?, ?, ?, ?, ?, ?, 1)");
 
-			$vehicle_create_stmt->bind_param('sssdsd', $regNr, $make, $model, $year, $today, $mileage);
+			$vehicle_create_stmt->bind_param('sssdsd', $registration_number, $make, $model, $year, $today, $mileage);
 
 			if (!$vehicle_create_stmt->execute()){
 					//Error
@@ -115,9 +115,10 @@ class vehicle{
 	private function updateField($field_name, $field_value){
 		global $mysqli;
 
+		$field = $mysqli->real_escape_string($field_name);
 		$value = $mysqli->real_escape_string($field_value);
 
-		$update_field_stmt = $mysqli->prepare("UPDATE " . TABLE_VEHICLES . " set " . $field_name . " = ? WHERE registration_number = " . $this->regNr);
+		$update_field_stmt = $mysqli->prepare("UPDATE " . TABLE_VEHICLES . " set " . $field . " = ? WHERE registration_number = '" . $this->registration_number . "'");
 
 		$update_field_stmt->bind_param('s', $field_value);
 
@@ -162,7 +163,7 @@ class vehicle{
 
 	function updateMileage($new_mileage, $lower = false){
 		
-		if ($new_mileage > $this->mileage || $lower == true){
+		if ($new_mileage > $this->mileage || $lower === true){
 			// lower mileage super special cases for example 
 			// if mileage has been set too high by mistake
 			// if mileage is only read through OBDII this problem
@@ -176,19 +177,19 @@ class vehicle{
 
 	function decommisionVehicle(){
 		if ($this->active){
-			$this->updateField('active', 0);	
+			$this->updateField('active', '0');	
 		}
 
 	}
 
-	function commisionVehicle(){
+	function recommisionVehicle(){
 		if (!$this->active){
-			$this->updateField('active', 1);	
+			$this->updateField('active', '1');	
 		}
 	}	
 
 	function getRegNr(){
-		return $this->regNr;
+		return $this->registration_number;
 	}
 
 	function getMake(){
@@ -252,11 +253,11 @@ class vehicle{
 		}
 
 		$vehicle_stmt->store_result();
-		$vehicle_stmt->bind_result($regNr);
+		$vehicle_stmt->bind_result($registration_number);
 		$vehicle_list = array();
 
 		while ($vehicle_stmt->fetch()) {
-			$vehicle_list[] = new vehicle($regNr);
+			$vehicle_list[] = new vehicle($registration_number);
 
 		}
 

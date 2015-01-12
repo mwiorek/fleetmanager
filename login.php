@@ -57,7 +57,7 @@ $errors = $errorStack->getErrors();
 
 $smarty = new Smarty();
 
-$smarty->assign('pageTitle', "Login");
+$smarty->assign('page_title', "Login");
 
 $smarty->assign('csrfToken', $CSRFToken);
 $smarty->assign('email_address', $input_email_address);

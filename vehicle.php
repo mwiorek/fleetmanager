@@ -16,8 +16,8 @@ if (!isset($_SESSION['users_id'])){
 
 $successful_update = false;
 
-if (isset($_GET['regNr']) && $_GET['regNr'] != ''){
-	$vehicle = new vehicle($_GET['regNr']);
+if (isset($_GET['reg_nr']) && $_GET['reg_nr'] != ''){
+	$vehicle = new vehicle($_GET['reg_nr']);
 
 	if (is_null($vehicle->getRegNr())){
 		$vehicle = false;
@@ -25,7 +25,7 @@ if (isset($_GET['regNr']) && $_GET['regNr'] != ''){
 	
 }
 
-$regNr = null;
+$registration_number = null;
 $make = null;
 $model = null;
 $year = null;
@@ -37,13 +37,6 @@ if (isset($_POST['action']) && $_POST['action'] != 'toggleStatus'){
 
 	if (!$csrf->validateCSRFToken($_POST['csrfToken'])){
 		$errorStack->setError(301);
-	}
-
-	if (isset($_POST['regNr']) && preg_match('/([A-Z,a-z]){3}([0-9]){3}/', $_POST['regNr'])){
-		$regNr = strtoupper($_POST['regNr']);
-	}else{
-		$errorStack->setError(217);
-
 	}
 
 	if (isset($_POST['make']) && $_POST['make'] != ''){
@@ -68,7 +61,11 @@ if (isset($_POST['action']) && $_POST['action'] != 'toggleStatus'){
 	}
 
 	if (isset($_POST['mileage']) && preg_match('/\d+/', $_POST['mileage'])){
-		$mileage = strtoupper($_POST['mileage']);
+		if ($_POST['action'] == 'update' && $_POST['mileage'] < $vehicle->getMileage()){
+			$errorStack->setError(224);
+		}else{
+			$mileage = $_POST['mileage'];	
+		}
 	}else{
 		$errorStack->setError(221);
 
@@ -79,8 +76,8 @@ if (isset($_POST['action']) && $_POST['action'] != 'toggleStatus'){
 		if ($_POST['action'] == 'create'){
 
 			try{
-				vehicle::createVehicle($regNr, $make, $model, $year, $mileage);
-				$vehicle = new vehicle($regNr);
+				vehicle::createVehicle($registration_number, $make, $model, $year, $mileage);
+				$vehicle = new vehicle($registration_number);
 				$successful_update = true;
 			}catch (Exception $e){
 				$errorStack->setError($e->getCode());
@@ -89,7 +86,7 @@ if (isset($_POST['action']) && $_POST['action'] != 'toggleStatus'){
 
 		}elseif ($_POST['action'] == 'update') {
 
-			if ($vehicle && $vehicle->getRegNr() == $_GET['regNr']){
+			if ($vehicle && $vehicle->getRegNr() == $_GET['reg_nr']){
 
 				try {
 
@@ -100,15 +97,17 @@ if (isset($_POST['action']) && $_POST['action'] != 'toggleStatus'){
 					if ($_POST['model'] != $vehicle->getModel()){
 						$user->updateModel($_POST['model']);
 					}
-					if (preg_match("\d{4}", $_POST['year']) && $_POST['year'] != $vehicle->getYear()){
+					if (preg_match("/\d{4}/", $_POST['year']) && $_POST['year'] != $vehicle->getYear()){
 						$user->updateYear($_POST['year']);
 					}
-
-					if (preg_match("\d+", $_POST['mileage']) && $_POST['mileage'] >= $vehicle->getMileage()){
-						$vehicle->updateMileage($_POST['mileage']);
+				
+					if (preg_match("/\d+/", $_POST['mileage'])){
+						$vehicle->updateMileage($_POST['mileage']);			
 					}
 
 					$successful_update = true;
+					$vehicle = new vehicle($_GET['reg_nr']);
+					//reload after update;
 
 				} catch (Exception $e) {
 					$errorStack->setError($e->getCode());
@@ -123,20 +122,21 @@ if (isset($_POST['action']) && $_POST['action'] != 'toggleStatus'){
 
 	}
 
-}elseif(isset($_POST['action']) && $_POST['action'] == 'toggleStatus'){
+}elseif(isset($_POST['action']) && $_POST['action'] == 'toggle_status'){
 
-	if (isset($vehicle) && $vehicle->getRegNr == $_GET['regNr']){
+	if (isset($vehicle) && $vehicle->getRegNr() == $_GET['reg_nr']){
 		if ($vehicle->getStatus()){
 			$vehicle->decommisionVehicle();
 		}else{
 			$vehicle->recommisionVehicle();
 		}
+		$vehicle = new vehicle($_GET['reg_nr']);
+		//reload after update;
 	}else{
 		$errorStack->setError(225);
 	}
 
 }
-
 
 $CSRFToken = $csrf->generateCSRFToken(session_id());
 
@@ -145,7 +145,7 @@ require_once(DIR_WS_INCLUDES . 'application_bottom.php');
 $errors = $errorStack->getErrors();
 
 $smarty = new Smarty();
-$smarty->assign('pageTitle', 'Vehicle Information');  
+$smarty->assign('page_title', 'Vehicle Information');  
 
 $smarty->assign('csrfToken', $CSRFToken);
 
@@ -155,7 +155,7 @@ if (isset($vehicle)){
 	$smarty->assign('vehicle', $vehicle);
 	$smarty->display('vehicles_edit.tpl');
 }else{
-	$smarty->assign('regNr', $regNr);
+	$smarty->assign('registration_number', $registration_number);
 	$smarty->assign('make', $make);
 	$smarty->assign('model', $model);
 	$smarty->assign('year', $year);

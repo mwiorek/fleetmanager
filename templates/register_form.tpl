@@ -62,6 +62,15 @@
 		{/if}
 	</div>
 
+	<div class="form-group">
+		<label>Roles:</label>
+		{foreach $roles as $role}
+			
+			<label><input type="checkbox" name="roles[]" value="{$role}">{$role}</label>
+		
+		{/foreach}
+	</div>
+
 	<button class="btn btn-primary" type="submit">Register Account</button>
 
 </form>

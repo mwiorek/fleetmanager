@@ -271,7 +271,7 @@ require_once(DIR_WS_INCLUDES . 'application_bottom.php');
 $errors = $errorStack->getErrors();
 
 $smarty = new Smarty();
-$smarty->assign('pageTitle', 'Settings');  
+$smarty->assign('page_title', 'Settings');  
 
 $smarty->assign('csrfToken', $CSRFToken);
 $smarty->assign('url_params', $url_params);

@@ -12,13 +12,19 @@ $csrf = new csrf();
 $name = NULL;
 $email_address = NULL;
 
+$show_admin = false;
+
 if (isset($_SESSION['users_id'])){
 	$logged_in_user = new user($_SESSION['users_id']);
 	if (!in_array('ADMIN', $logged_in_user->getUserRole())){
 		$errorStack->setError(302);
+	}else{
+		$show_admin = true;
 	}
 }  
 	//not triggered if user isn't logged in
+
+$roles = user::getAllRoles($show_admin);
 
 if (isset($_POST['action']) && $_POST['action'] == 'register'){
 
@@ -60,6 +66,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'register'){
 		$errorStack->setError(301);
 	}
 
+	
 	if (!$errorStack->hasErrors()){
 		//if all is clear create the new user
 		try{
@@ -83,6 +90,16 @@ if (isset($_POST['action']) && $_POST['action'] == 'register'){
 
 
 			mail($name . '<'.$email_address.'>', $email_subject, $email_template_html . $email_template_plain, $email_headers);
+			
+			
+			foreach ($roles as $role) {
+				if (isset($_POST['roles'])){
+					if (in_array($role, $_POST['roles'])){
+						//addRole
+						$user->addRole($role);
+					}
+				}
+			}
 
 			http_redirect(FILENAME_DEFAULT);
 
@@ -101,15 +118,17 @@ $errors = $errorStack->getErrors();
 
 $smarty = new Smarty();
 
-$smarty->assign('pageTitle', "Register Account");
+$smarty->assign('page_title', "Register Account");
 
 $smarty->assign('csrfToken', $CSRFToken);
 $smarty->assign('name', $name);
 $smarty->assign('email_address', $email_address);
 $smarty->assign('errors', $errors);	
 
+$smarty->assign('roles', $roles);
+
 if (isset($_SESSION['users_id'])){
-		$smarty->display('register_user.tpl');
+	$smarty->display('register_user.tpl');
 }else{
 	$smarty->display('register.tpl');
 }

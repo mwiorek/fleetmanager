@@ -2,24 +2,24 @@
 
 class user{
 	
-	private $userId;
+	private $users_id;
 	private $name;
 	private $email_address;
 	private $password;
-	private $userProfileImage;
-	private $lastLogin;
-	private $lastModified;
-	private $dateCreated;
-	private $userRole;
+	private $users_profile_image;
+	private $last_login;
+	private $last_modified;
+	private $date_created;
+	private $user_roles;
 
-	function user($userId){
+	function user($users_id){
 		global $mysqli;
 		
 		$user_stmt = $mysqli->prepare("SELECT users_id, users_name, users_email_address, users_password, users_profile_image, last_login, last_modified, date_created FROM " . TABLE_USERS . " u WHERE u.users_id = ?");
 
-		$userId = $mysqli->real_escape_string($userId);
+		$users_id = $mysqli->real_escape_string($users_id);
 
-		$user_stmt->bind_param('s', $userId);
+		$user_stmt->bind_param('s', $users_id);
 
 		if (!$user_stmt->execute()){
 				//Error
@@ -27,20 +27,20 @@ class user{
 		}
 
 		$user_stmt->store_result();
-		$user_stmt->bind_result($userId, $name, $email_address, $password, $userProfileImage, $lastLogin, $lastModified, $dateCreated);
+		$user_stmt->bind_result($users_id, $name, $email_address, $password, $users_profile_image, $last_login, $last_modified, $date_created);
 
 		if ($user_stmt->fetch()) {
-			$this->userId = $userId;
+			$this->users_id = $users_id;
 			$this->name = $name;
 			$this->email_address = $email_address;
 			$this->password = $password;
-			$this->userProfileImage = $userProfileImage;
-			$this->lastLogin = $lastLogin;
-			$this->lastModified = $lastModified;
-			$this->dateCreated = $dateCreated;
+			$this->users_profile_image = $users_profile_image;
+			$this->last_login = $last_login;
+			$this->last_modified = $last_modified;
+			$this->date_created = $date_created;
 			
 			$role_stmt = $mysqli->prepare("SELECT role FROM " . TABLE_USERS_ROLES . " r WHERE r.users_id = ?");
-			$role_stmt->bind_param('s', $userId);	
+			$role_stmt->bind_param('s', $users_id);	
 			
 			if (!$role_stmt->execute()){
 				//Error
@@ -48,14 +48,14 @@ class user{
 			}
 
 			$role_stmt->store_result();
-			$role_stmt->bind_result($userRole);
+			$role_stmt->bind_result($user_role);
 
-			$userRoles = array();
+			$user_roles = array();
 			while ($role_stmt->fetch()) {
-				$userRoles[] = $userRole;
+				$user_roles[] = $user_role;
 			}
 
-			$this->userRole = $userRoles;
+			$this->user_roles = $user_roles;
 
 			return $this;
 			
@@ -73,7 +73,7 @@ class user{
 
 		$value = $mysqli->real_escape_string($field_value);
 		
-		$update_field_stmt = $mysqli->prepare("UPDATE " . TABLE_USERS . " set " . $field_name . " = ? WHERE users_id = " . $this->userId);
+		$update_field_stmt = $mysqli->prepare("UPDATE " . TABLE_USERS . " set " . $field_name . " = ? WHERE users_id = " . $this->users_id);
 
 		$update_field_stmt->bind_param('s', $field_value);
 
@@ -133,8 +133,68 @@ class user{
 		$this->updateField('last_modified', $new_date);
 	}	
 
+	private function updateRole($role, $delete = false){
+		global $mysqli;
+
+		$check_role = $mysqli->prepare("SELECT count(*) as total FROM " . TABLE_ROLES . " WHERE roles_name = ?");
+		$check_role->bind_param('s', $role);
+
+		if (!$check_role->execute()){
+			//Error
+			trigger_error('The query execution failed; MySQL said ('.$check_role->errno.') '.$check_role->error, E_USER_ERROR);
+		}
+
+		$check_role->store_result();
+		$check_role->bind_result($role_exists);
+		$check_role->fetch();
+		$check_role->close();
+		if ($role_exists){
+			//will return 0 or 1, can be used as a boolean
+			if ($delete){
+				$user_role_stmt = $mysqli->prepare("DELETE FROM " . TABLE_USERS_ROLES . " WHERE users_id = ? and role = ?");
+			}else{
+				$user_role_stmt = $mysqli->prepare("INSERT INTO " . TABLE_USERS_ROLES . " (users_id, role) VALUES (?, ?)");
+			}
+
+			$user_role_stmt->bind_param('ss', $this->getUserId(), $role);
+
+			if (!$user_role_stmt->execute()){
+							//Error
+				trigger_error('The query execution failed; MySQL said ('.$user_role_stmt->errno.') '.$user_role_stmt->error, E_USER_ERROR);
+			}
+
+			$affected_rows = $user_role_stmt->affected_rows;
+			
+			$user_role_stmt->close();
+			
+			if ($affected_rows > 0){
+				return true;
+			}else{
+				return false;
+			}
+
+		}else{
+			throw new Exception("Role doesn't exist", 226);	
+		}
+		return false;
+		
+	}
+
+	function addRole($role){
+		$this->updateRole($role, false);
+	}
+
+	function removeRole($role){
+		if ($role == 'ADMIN' && user::countUsers('ADMIN') <= 1){
+			throw new Exception("ERROR_NAME_THIS_IS_THE_ONLY_ADMIN", 227);
+		}else{
+			$this->updateRole($role, true);
+		}
+		
+	}
+
 	function getUserId(){
-		return $this->userId;
+		return $this->users_id;
 	}
 
 	function getName(){
@@ -150,23 +210,23 @@ class user{
 	}
 
 	function getProfileImage(){
-		return $this->userProfileImage;
+		return $this->users_profile_image;
 	}
 
 	function getLastLogin(){
-		return $this->lastLogin;
+		return $this->last_login;
 	}
 
 	function getLastModified(){
-		return $this->lastModified;
+		return $this->last_modified;
 	}
 
 	function getDateCreated(){
-		return $this->dateCreated;
+		return $this->date_created;
 	}
 
 	function getUserRole(){
-		return $this->userRole;
+		return $this->user_roles;
 	}
 
 
@@ -266,66 +326,6 @@ class user{
 
 	}
 
-	private function updateRole($role, $delete = false){
-		global $mysqli;
-
-		$check_role = $mysqli->prepare("SELECT count(*) as total FROM " . TABLE_ROLES . " WHERE roles_name = ?");
-		$check_role->bind_param('s', $role);
-
-		if (!$check_role->execute()){
-			//Error
-			trigger_error('The query execution failed; MySQL said ('.$check_role->errno.') '.$check_role->error, E_USER_ERROR);
-		}
-
-		$check_role->store_result();
-		$check_role->bind_result($role_exists);
-		$check_role->fetch();
-		$check_role->close();
-		if ($role_exists){
-			//will return 0 or 1, can be used as a boolean
-			if ($delete){
-				$user_role_stmt = $mysqli->prepare("DELETE FROM " . TABLE_USERS_ROLES . " WHERE users_id = ? and role = ?");
-			}else{
-				$user_role_stmt = $mysqli->prepare("INSERT INTO " . TABLE_USERS_ROLES . " (users_id, role) VALUES (?, ?)");
-			}
-
-			$user_role_stmt->bind_param('ss', $this->getUserId(), $role);
-
-			if (!$user_role_stmt->execute()){
-							//Error
-				trigger_error('The query execution failed; MySQL said ('.$user_role_stmt->errno.') '.$user_role_stmt->error, E_USER_ERROR);
-			}
-
-			$affected_rows = $user_role_stmt->affected_rows;
-			
-			$user_role_stmt->close();
-			
-			if ($affected_rows > 0){
-				return true;
-			}else{
-				return false;
-			}
-
-		}else{
-			throw new Exception("Role doesn't exist", 226);	
-		}
-		return false;
-		
-	}
-
-	function addRole($role){
-		$this->updateRole($role, false);
-	}
-
-	function removeRole($role){
-		if ($role == 'ADMIN' && user::countUsers('ADMIN') <= 1){
-			throw new Exception("ERROR_NAME_THIS_IS_THE_ONLY_ADMIN", 227);
-		}else{
-			$this->updateRole($role, true);
-		}
-		
-	}
-
 	static function countUsers($role = null){
 		global $mysqli;
 
@@ -397,11 +397,11 @@ class user{
 		}
 
 		$user_stmt->store_result();
-		$user_stmt->bind_result($userId);
+		$user_stmt->bind_result($users_id);
 
 		if ($user_stmt->fetch()) {
 
-			$user = new user($userId);
+			$user = new user($users_id);
 		}
 
 		$user_stmt->close();

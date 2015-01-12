@@ -14,4 +14,5 @@ define('FILENAME_ERROR_NAMES', 'errorNames.php');
 define('FILENAME_DATABASE_TABLES', 'databaseTables.php');
 define('FILENAME_ERRORSTACK', 'errorStack.php');
 define('FILENAME_DB_CONNECTION', 'databaseConnection.php');
+define('FILENAME_DRIVERS_ENTRY', 'driversEntry.php');
 define('FILENAME_CSRF', 'csrf.php');
