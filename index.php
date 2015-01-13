@@ -17,25 +17,32 @@ if (!isset($_SESSION['users_id'])){
 
 $user = new user($_SESSION['users_id']);
 
-$userList = user::getAllUsers();
-$driverList = user::getAllUsers('DRIVER'); 
+$user_list = user::getAllUsers(); 
 
 $available_drivers = driversEntry::getAvailableDrivers(); 
 $active_drivers = driversEntry::getActiveDriverRows();
 $available_vehicles = driversEntry::getAvailableVehicles();
 
+$active_vehicles = $user->getActiveVehicles();
+$assigned_vehicles = $user->getAssignedVehicles();
+
 $smarty = new Smarty();
 $smarty->assign('page_title', "Dashboard");
+$smarty->assign('sub_title', $user->getName() . " - Role(s): " . implode(', ', $user->getUserRole()));
+
 $smarty->assign('user_roles', $user->getUserRole());
 
 //ADMIN
-$smarty->assign('usersList', $userList);
+$smarty->assign('user_list', $user_list);
 
 //ADM + ADMIN
 $smarty->assign('available_drivers', $available_drivers);
 $smarty->assign('active_drivers', $active_drivers);
 
 $smarty->assign('available_vehicles', $available_vehicles);
+
+$smarty->assign('active_vehicles', $active_vehicles);
+$smarty->assign('assigned_vehicles', $assigned_vehicles);
 
 $smarty->assign('all_vehicle_list', vehicle::listAllVehicles(false, "registration_number", $fromRow = 0, $rowCount = 20));
 

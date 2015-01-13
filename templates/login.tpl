@@ -26,16 +26,10 @@
         <div class="alert alert-danger" role="alert">{$smarty.const.{$errors.202}}</div>
         {/if}
     </div>
-    <div class="checkbox">
-        <label>
-            <input type="checkbox" value="remember-me" name="remember_me"> Remember me
-        </label>
-    </div>
     <div class="form-actions">
         <input class="btn btn-primary" type="submit" value="Sign in">
         <span> or </span>
         <a href="{$smarty.const.FILENAME_REGISTER}" class="btn">Register</a>
     </div>
-    <p>Have you forgotten your password? <a href="{$smarty.const.FILENAME_PASSWORD_FORGOTTEN}">Click Here</a></p>
 </form>
 {/block}

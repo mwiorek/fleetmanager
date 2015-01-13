@@ -33,17 +33,24 @@ $mileage = null;
 // initialize variables to be able to use
 // them as values in the form
 
-if (isset($_POST['action']) && $_POST['action'] != 'toggleStatus'){
+if (isset($_POST['action']) && $_POST['action'] != 'toggle_status'){
 
 	if (!$csrf->validateCSRFToken($_POST['csrfToken'])){
 		$errorStack->setError(301);
 	}
+	if ($_POST['action'] == 'create'){
+		if (isset($_POST['reg_nr']) && preg_match('/([A-Z,a-z]){3}([0-9]){3}/', $_POST['reg_nr'])){
+			$registration_number = strtoupper($_POST['reg_nr']);
+		}else{
+			$errorStack->setError(217);
+		}
+	}
+	
 
 	if (isset($_POST['make']) && $_POST['make'] != ''){
-		$make = strtoupper($_POST['make']);
+		$make = $_POST['make'];
 	}else{
 		$errorStack->setError(218);
-
 	}
 
 	if (isset($_POST['model']) && $_POST['model'] != ''){
@@ -78,7 +85,7 @@ if (isset($_POST['action']) && $_POST['action'] != 'toggleStatus'){
 			try{
 				vehicle::createVehicle($registration_number, $make, $model, $year, $mileage);
 				$vehicle = new vehicle($registration_number);
-				$successful_update = true;
+				http_redirect(FILENAME_DEFAULT);
 			}catch (Exception $e){
 				$errorStack->setError($e->getCode());
 				//error_code 222 regnr already exists
@@ -100,7 +107,7 @@ if (isset($_POST['action']) && $_POST['action'] != 'toggleStatus'){
 					if (preg_match("/\d{4}/", $_POST['year']) && $_POST['year'] != $vehicle->getYear()){
 						$user->updateYear($_POST['year']);
 					}
-				
+
 					if (preg_match("/\d+/", $_POST['mileage'])){
 						$vehicle->updateMileage($_POST['mileage']);			
 					}

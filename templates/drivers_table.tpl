@@ -9,18 +9,18 @@
 		<th>Mileage</th>
 		<th></th>
 	</tr>
-	{foreach $ActiveVehicleList as $vehicle} 
+	{foreach $activeVehicleList as $entry_id => $vehicle} 
 	<tr {if !$vehicle->getStatus()}class="row-error"{/if}>
 		<td>{$vehicle->getRegNr()}</td>
 		<td>{$vehicle->getMake()}</td>
 		<td>{$vehicle->getModel()}</td>
 		<td>{$vehicle->getYear()}</td>
 		<td>{$vehicle->getMileage()}</td>
-		<td><a href="{$smarty.const.FILENAME_VEHICLE}?regNr={$vehicle->getRegNr()}">Edit</a></td>
+		<td><a href="{$smarty.const.FILENAME_RETURN_VEHICLE}?entry_id={$entry_id}">Return Vehicle</a></td>
 	</tr>
 	{foreachelse}
 	<tr>
-		<td colspan="5">
+		<td colspan="6">
 			No active vehicles
 		</td> 
 	</tr>
@@ -37,18 +37,18 @@
 		<th>Mileage</th>
 		<th></th>
 	</tr>
-	{foreach $AssignedVehicleList as $vehicle} 
+	{foreach $assignedVehicleList as $entry_id => $vehicle} 
 	<tr {if !$vehicle->getStatus()}class="row-error"{/if}>
 		<td>{$vehicle->getRegNr()}</td>
 		<td>{$vehicle->getMake()}</td>
 		<td>{$vehicle->getModel()}</td>
 		<td>{$vehicle->getYear()}</td>
 		<td>{$vehicle->getMileage()}</td>
-		<td><a href="{$smarty.const.FILENAME_VEHICLE}?regNr={$vehicle->getRegNr()}">Edit</a></td>
+		<td><a href="{$smarty.const.FILENAME_CHECKOUT_VEHICLE}?entry_id={$entry_id}">Checkout Vehicle</a></td>
 	</tr>
 	{foreachelse}
 	<tr>
-		<td colspan="5">
+		<td colspan="6">
 			No assigned vehicles
 		</td> 
 	</tr>

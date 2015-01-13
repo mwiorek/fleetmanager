@@ -9,8 +9,8 @@
 	<input type="hidden" name="action" value="create">
 	<h3>Vehicle Information</h3>
 	<div class="form-group {if ($errors.217 neq NULL) or ($errors.222 neq NULL)}has-error{/if}">
-		<label for="regNr">Registration Number:</label>
-		<input type="text" id="regNr" name="regNr" class="form-control" placeholder="Registration Number e.g. ABC123" required autofocus pattern="{literal}([A-Z,a-z]){3}([0-9]){3}{/literal}" title="A valid registration number 6 characters" value="{$registration_number}">
+		<label for="reg_nr">Registration Number:</label>
+		<input type="text" id="regNr" name="reg_nr" class="form-control" placeholder="Registration Number e.g. ABC123" required autofocus pattern="{literal}([A-Z,a-z]){3}([0-9]){3}{/literal}" title="A valid registration number 6 characters" value="{$registration_number}">
 		{if is_array($errors) and array_key_exists(217,$errors)}
 
 		<div class="alert alert-danger" role="alert">{$smarty.const.{$errors.217}}</div>
