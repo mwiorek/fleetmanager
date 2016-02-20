@@ -18,6 +18,7 @@ if (!isset($_SESSION['users_id'])){
 $user = new user($_SESSION['users_id']);
 
 $user_list = user::getAllUsers(); 
+$vehicle_list = vehicle::listAllVehicles()
 
 $available_drivers = driversEntry::getAvailableDrivers(); 
 $active_drivers = driversEntry::getActiveDriverRows();
@@ -44,6 +45,6 @@ $smarty->assign('available_vehicles', $available_vehicles);
 $smarty->assign('active_vehicles', $active_vehicles);
 $smarty->assign('assigned_vehicles', $assigned_vehicles);
 
-$smarty->assign('all_vehicle_list', vehicle::listAllVehicles(false, "registration_number", $fromRow = 0, $rowCount = 20));
+$smarty->assign('all_vehicle_list', $vehicle_list);
 
 $smarty->display('index.tpl');	

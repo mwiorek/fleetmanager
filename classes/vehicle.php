@@ -217,36 +217,10 @@ class vehicle{
 		return $this->active;
 	}
 
-	static function listAllVehicles($onlyActive = false, $sort_order = "registration_number", $fromRow = 0, $rowCount = null){
-		//TODO
+	static function listAllVehicles(){
 		global $mysqli;
 
-		$activeQuery = "";
-
-		if (!$onlyActive){
-			$activeQuery = " or active = 0";
-		}
-
-		switch ($sort_order) {
-			case "registration_number":
-			case "make":
-			case "model":
-			case "year":
-			case "registration_date":
-			case "vehicle_mileage":
-			//keep the sortorder unchanged
-			break;
-			default:
-			$sort_order = "registration_number";
-			break;
-		}
-
-		$limit_query = "";
-		if (!is_null($rowCount)){
-			$limit_query = "LIMIT " . $fromRow . ", " . $rowCount;
-		}
-
-		$vehicle_stmt = $mysqli->prepare("SELECT registration_number FROM " . TABLE_VEHICLES . " WHERE (active = 1" . $activeQuery . ") ORDER BY " . $sort_order . " asc " . $limit_query);
+		$vehicle_stmt = $mysqli->prepare("SELECT registration_number FROM " . TABLE_VEHICLES . "");
 
 		if (!$vehicle_stmt->execute()){
 				//Error
@@ -259,7 +233,6 @@ class vehicle{
 
 		while ($vehicle_stmt->fetch()) {
 			$vehicle_list[] = new vehicle($registration_number);
-
 		}
 
 		$vehicle_stmt->close();

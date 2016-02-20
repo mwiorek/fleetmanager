@@ -12,10 +12,10 @@ define('DIR_FS', str_replace("\\","/",getcwd()));
 
 define('DIR_WS', ''); // virtual file directory (webdirectories)
 
-define('SMARTY_DIR', DIR_FS . '/Smarty-3.1.19/');
+define('SMARTY_DIR', DIR_FS . '/Smarty/');
 
-define('HTTP_SERVER', 'http://localhost/gesell'); 
-define('HTTPS_SERVER', 'https://localhost/gesell'); 
+define('HTTP_SERVER', 'http://127.0.0.1'); 
+define('HTTPS_SERVER', 'https://127.0.0.1'); 
 
 define('SSL_ENABLED', true);
 
